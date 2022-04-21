@@ -1,0 +1,423 @@
+/***************************************************
+ * semdiag: draw SEM path diagram interactively    *
+ * Authors: Yujiao Mai, Zhiyong Zhang, Ke-Hai Yuan *
+ * Copyright 2015-2015, psychstat.org              *
+ * Licensed under the MIT License (MIT)            *     
+ ***************************************************/
+ 
+#pdsvgpage {
+	padding: 0.2em 0em 0.2em 0em; 
+	margin-top:5px;
+	margin-bottom: 5px;
+	margin-left:20px;
+	margin-right:20px;
+	text-align: left;  
+	width:985px;	
+	height:600px;  
+}  
+	
+#pdsvgmenus{
+    width:200px;
+    height:100%;
+    background: #FFF;
+    box-shadow: 0 0 10px #AAA;
+	margin-top:0px;
+    margin-left: 0px;
+	padding-top:0.5px;
+	padding-left: 0.5px;
+	padding-right:0.5px;
+	padding-bottom:0.5px;
+    float:left;
+    display:bolock;
+	font-family:Arial, Helvetica, sans-serif;
+	font-style: normal;
+	font-size:11pt;	
+	overflow:hidden;		
+}
+
+#pdsvgfilemenu{
+    margin:5px 2px 5px 2px;
+    border-width:0px;
+    width:100%;
+    height:90px;
+    overflow:hidden;
+    display:bolock;
+}
+#subfilemenu{
+    margin:0px 0px 0px 0px;
+    border-width:0px;
+    width:200px;
+    display:bolock;
+}
+
+#pdsvgdiagrammenus{
+    margin:5px 2px 5px 2px;
+    border-width:0px;
+    width:100%;
+    height:295px;
+    overflow:auto;
+	overflow-x: hidden;
+    display:bolock;
+}
+#subdiagrammenu{
+    margin:0px 0px 0px 0px;
+    border-width:0px;
+    width:200px;
+    display:bolock;
+}
+#basicdiagram{
+    margin:0px 0px 0px 0px;
+    border-width:0px;
+    width:200px;
+    display:bolock;	
+}
+#optiondiagram{
+    margin:5px 0px 0px 0px;
+    border-width:0px;
+    width:200px;	
+    display:bolock;		
+}
+#optiondiagramG8{
+    margin:5px 0px 0px 0px;
+    border-width:0px;
+    width:200px;	
+    display:bolock;	
+}
+
+#pdsvgmatrix{
+    margin:5px 2px 5px 2px;
+    border-width:0px;
+    width:100%;
+    height:200px;
+    overflow:auto;
+	overflow-x: hidden;
+    display:bolock;
+}
+
+#submatrix{
+    margin:0px 0px 0px 0px;
+    border-width:0px;
+    width:200px;
+	height:90%;
+    display:bolock;
+	line-height:70%;
+	font-size:8pt;
+}
+
+#svgcontainer{
+	margin-top:0px;
+	margin-left: 5px;
+	width:770px;
+	height:100%;
+	background: #fff;
+	box-shadow: 0 0 10px #AAA;
+	padding-top:0.5px;
+	padding-left: 0.5px;
+	padding-right:0.5px;
+	padding-bottom:0.5px;
+	float:left;
+	overflow:auto; 
+	display:bolock;	
+}
+
+#header{
+	padding: 0.2em 0em 0.2em 0em; 
+	margin-top:5px;
+	margin-bottom: 5px;
+	margin-left:20px;
+	margin-right:20px;
+	text-align: left;  
+	width:985px;
+	height:50px; 
+	font-size: 24pt;
+}
+#footer{
+	padding: 0.2em 0em 0.2em 0em; 
+	margin-top:5px;
+	margin-bottom: 5px;
+	margin-left:20px;
+	margin-right:20px;
+	text-align: left;  
+	width:985px;
+	height:5px; 
+	font-size: 24pt;
+}
+
+div.semdiag .bar {
+  background: #DCDCDC;	
+  height: 95%;
+  width: 100%;
+  padding: 0px 0px 0px 0px;
+  margin: 5px 0px 5px 0px;
+  clear: both;
+  box-shadow: 0 0 10px #AAA;
+}
+
+::-webkit-scrollbar {
+    width: 12px;
+}
+::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 6px;
+}
+::-webkit-scrollbar-track-piece  { /* 4 */ 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.4); 
+    border-radius: 6px;
+}
+::-webkit-scrollbar-thumb {
+    border-radius: 6px;
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.5); 
+}
+::-webkit-scrollbar-corner       { /* 6 */ 
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3); 
+    border-radius: 6px;
+}
+
+
+div.semdiag button.button {
+	border: 1px solid #339;
+	color: #669;
+	background-color: #f5f5f5;
+	text-decoration: none;
+	vertical-align: middle;
+	margin: 2px;
+	padding: .2em .2em;
+	font-size: 100%;
+}
+
+div.semdiag button.image {
+	width:40px; 
+	height:40px; 
+	padding:2.5px 2.5px 2.5px 2.5px; 
+	margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 0.5px;
+    margin-left: 0.5px;
+	background-color: #fff;
+  	border-width:0;
+	border: none;
+	box-shadow:1px 1px 1.5px grey;
+	border-radius:6px;
+}
+
+button.group4image {
+    width: 17px;
+    height: 17px;
+    padding: 0.1px 0.1px 0.1px 0.1px;
+    margin-top: 0.5px;
+    margin-bottom: 0.00px;
+    margin-right: 0.00px;
+    margin-left: 0.00px;
+	background-color: #fff;
+  	border-width:0;
+	border: none;
+    box-shadow: 0px 0px 0.2px grey;
+    border-radius: 2px;
+}
+button.group4image2{
+    width: 18px;
+    height: 18px;
+    padding: 0.1px 0.1px 0.1px 0.1px;
+    margin-top: 0.00px;
+    margin-bottom: 0.00px;
+    margin-right: 0.00px;
+    margin-left: 0.00px;
+	background-color: #fff;
+  	border-width:0;
+	border: none;
+    box-shadow: 0px 0px 0.2px grey;
+    border-radius: 2px;
+}
+button.group2image {
+    width: 36px;
+    height: 17px;
+    padding: 0.0px 0.0px 0.0px 0.0px;
+    margin-top: 1.5px;
+    margin-bottom: 0.00px;
+    margin-right: 0.00px;
+    margin-left: 0.00px;
+	background-color: #fff;
+  	border-width:0;
+	border: none;
+    box-shadow: 0px 0px 0.2px grey;
+    border-radius: 2px;
+}
+button.group2image2 {
+    width: 17px;
+    height: 36px;
+    padding: 0.1px 0.1px 0.1px 0.1px;
+    margin-top: 0.5px;
+    margin-bottom: 0.5px;
+    margin-right: 0.00px;
+    margin-left: 0.00px;
+	background-color: #fff;
+  	border-width:0;
+	border: none;
+    box-shadow: 0px 0px 0.2px grey;
+    border-radius: 2px;
+}
+div.groupbuttons{
+    width: 42.5px;
+    height: 40px;    
+    margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 1px;
+    margin-left: 1px;
+    padding: 0px 0px 0px 0.5px;
+    box-shadow: 0px 0px 0.5px grey;
+	border-radius:0.5px;
+    border-width: 0;
+    background-color: #ededed;
+	vertical-align:middle;	
+	text-align: center;
+    float: left;	
+}
+div.group8buttons{
+	width: 65px;
+    height: 65px;
+	margin-top: 1px;
+    margin-bottom: 1px;
+    margin-right: 1px;
+    margin-left: 1px;
+    padding: 0px 0px 0px 0px;
+    box-shadow: 0px 0px 0.5px grey;
+	border-radius:0.5px;
+    background-color: none;	
+    border-width: 0;
+	vertical-align:middle;	
+	text-align: center;
+    float: left;	
+}
+div.optionbar{
+    width: 20px;
+    height: 38px;
+	margin-top: 2px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    padding: 0px 0px 0px 0px;
+	box-shadow:0px 0px 0px grey;
+	border-radius:0px;
+    background-color: none;	
+    border-width: 0;
+    float: left;
+	vertical-align:middle;
+	text-align: center;
+	font-size:9pt;	
+}
+div.optionbuttons{
+    width: 20px;
+    height: 38px;
+	margin-top: 2px;
+    margin-bottom: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+    padding: 0px 0px 0px 0px;
+	box-shadow:0px 0px 0px grey;
+	border-radius:0px;
+    background-color: none;	
+    border-width: 0;
+    float: left;
+	vertical-align:middle;
+	text-align: center;	
+	font-size:9pt;		
+}
+textarea.optiondiagramtext{
+    width: 20px;
+    height: 17px;
+    padding: 0.0px 0.0px 0.0px 0.0px;
+    margin-top: 1.5px;
+    margin-bottom: 0.00px;
+    margin-right: 0.00px;
+    margin-left: 0.00px;
+	background-color: #ededed;
+	resize: none;
+  	border-width:0.5px;
+	border-color: #bbb;
+	text-align: center;	
+	font-size: 8pt;	
+}
+
+
+div.semdiag button.button:hover {
+	border-color: #339;
+	background-color: #DCDCDC;
+	color: #669;
+  }
+div.semdiag button.button:active {
+	border-color: #339;
+	background-color: #d0dafd;
+	color: #669;
+  }  
+div.semdiag button.image:hover {
+	border-color: #339;
+	background-color: #DCDCDC;
+	color: #669;
+  } 
+div.semdiag button.group4image:hover {
+	border-color: #339;
+	background-color: #DCDCDC;
+	color: #669;
+  }
+div.semdiag button.group4image2:hover {
+  }
+div.semdiag button.group2image:hover {
+	border-color: #339;
+	background-color: #DCDCDC;
+	color: #669;
+  }     
+div.semdiag button.group2image2:hover {
+	border-color: #339;
+	background-color: #DCDCDC;
+	color: #669;
+  }  
+
+div.semdiag p.diagrammenu-linetitle{
+    margin-top: 0.6em;
+    margin-bottom: 0.1em;
+    margin-left: 0;
+    margin-right: 0;
+	line-height:18px;
+	font-weight: bold;
+}
+div.semdiag select.diagrammenu{
+	/*width:55px;*/
+	/*background-color:#F2F2FF;*/
+	background-color:#F0F0F0;
+	border-color:#BBBBBB;
+	margin-top:2px;
+	margin-bottom:1px;
+	margin-left:1px;
+	margin-right:1px;
+	font-weight: normal;
+}
+
+div.semdiag hr{
+  color: #DCDCDC;
+  border-color: #DCDCDC;
+  border-style: solid;
+  border-width: 1px;
+  margin: 0.2em 0.2em 0.2em 0.2em;
+  display: block;
+  width: 90%;	
+}
+
+div.semdiag a:link{
+	color: #0000FF;
+	text-decoration: none;
+}
+
+div.semdiag a:visited {
+	color: #0000FF;
+}
+
+div.semdiag a:hover,
+div.semdiag a:active {
+	text-decoration: underline;
+}
+
+div.semdiag h1 a,
+div.semdiag a.nolink {
+	color: #000;
+	text-decoration: none !important;
+}

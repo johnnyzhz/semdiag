@@ -1,0 +1,261 @@
+﻿<!-- ***************************************************-->
+<!-- * semdiag: draw SEM path diagram interactively    *-->
+<!-- * Authors: Yujiao Mai, Ziqian Xu, Zhiyong Zhang, Ke-Hai Yuan *-->
+<!-- * Copyright 2015-2022, psychstat.org              *-->
+<!-- * Licensed under the MIT License (MIT)            *-->
+<!-- * Current software version 1.0                    *-->
+<!-- * Support email for questions zzhang4@nd.edu      *-->
+<!-- *                             ymai@nd.edu         *-->
+<!-- ***************************************************-->
+
+<html>
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<title>SEM diagram</title>
+	<link rel="stylesheet" type="text/css" href="./css/page-diagram.css"/>
+	<link rel="stylesheet" type="text/css" href="./css/jquery-ui-1.8.20.custom.css"/>
+	<script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-json/2.4.0/jquery.json.min.js"> </script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_SVG"></script>
+	<script src="./js/svg_mathjax.js" charset="utf-8"></script>
+	<script src="./js/globalvars.js" charset="utf-8"></script>	
+	<script src="./js/geometryfs.js" charset="utf-8"></script>	
+	<script src="./js/edge&nodeMethods_l1.js" charset="utf-8"></script>
+	<script src="./js/edge&nodeMethods_l2.js" charset="utf-8"></script>
+	<script src="./js/svgeventfs.js" charset="utf-8"></script>
+	<script src="./js/recodefs.js" charset="utf-8"></script>
+	<script src="lib/MathJax.js"></script>
+	<script src="lib/svg.min.js"></script>
+	<script src="lib/svg2pdf.min.js"></script>
+	<script src="lib/jspdf.min.js"></script>
+</head>
+<body>
+
+
+<div class ="semdiag">
+	<div id="header">
+	   <div  class="bar">
+			 <a href="/" >semdiag: Draw SEM Diagrams</a> </br></br>		
+	  </div>
+	</div>
+	<div id="pdsvgpage" >
+		<div id="pdsvgmenus">
+			<div id="pdsvgfilemenu">
+				<div id="subfilemenu">
+				<button id="BTNload" class="image" ><img class=icon src="./img/open.png" width="36" height="36" name="Load from file"/></button>
+				<button id="BTNnew" class="image" ><img class=icon src="./img/new.png" width="36" height="36" name="New file"/></button>
+				<button id="BTNsave" class="image" ><img class=icon src="./img/save.png" width="36" height="36" name="Save to file"/></button>
+				<button id="BTNtoSVG" class="image" ><img class=icon src="./img/toSVG.png" width="36" height="36" name="Save to SVG"/></button>
+				<button id="BTNtoPNG" class="image" ><img class=icon src="./img/toPNG.png" width="36" height="36" name="Save to PNG"/></button>
+				<button id="BTNtoPDF" class="image" ><img class=icon src="./img/toPDF.png" width="36" height="36" name="Save to PDF"/></button>
+				<button id="BTNrenderMATH" class="image" ><img class=icon src="./img/renderMATH.png" width="36" height="36" name="Render MATH"/></button>
+				<button id="BTNtoMATH" class="image" ><img class=icon src="./img/toMATH.png" width="36" height="36" name="Save to MATH"/></button>
+				</div>
+			</div>
+			<hr>
+			<div id="pdsvgdiagrammenus">
+				<div id="subdiagrammenu">
+					<div id ="basicdiagram">
+						<button  id="BTNrect" class="image"  ><img class=icon src="./img/RECT.png" width="36" height="36" name="rect"></button>
+						<button  id="BTNellipse" class="image" ><img class=icon src="./img/ELLIPSE.png" width="36" height="36" name="circle"></button>				
+						<button  id="BTNtriangle" class="image" ><img class=icon src="./img/TRIANGLE.png" width="36" height="36" name="TRIANGLE"></button>									
+						<button  id="BTNlinkto" class="image" ><img class=icon src="./img/arrow.png" width="36" height="36" name="paths"></button>
+						</br>
+						<button  id="BTNlinktobi" class="image" ><img class=icon src="./img/arrowbi.png" width="36" height="36" name="pathsbi"></button>
+						<button  id="BTNtexting" class="image" ><img class=icon src="./img/TXT.png" width="36" height="36" name="txtedit"></button>			
+						<button  id="BTNDEL" class="image" ><img class=icon src="./img/DEL.png" width="36" height="36" name="delete"></button>
+						<button	 id="BTNclone" class="image" ><img class=icon src="./img/CLONE.png" width="36" height="36" name="clone" ></button>											
+					</div>
+					<div id ="optiondiagram">
+						<button id="BTNLa" class="image" ><img id="BTNLaimage" class=icon src="./img/La.png" width="36" height="36" name="la" ></button>	
+						<button id="BTNGrid" class="image" ><img class=icon src="./img/Grid.png" width="36" height="36" name="grid" ></button>						
+					
+						<div id="colors" class="groupbuttons" > 
+							<button  id="BTNBLACK" class="group4image" ><img class=icon src="./img/BLACK.png" width="15" height="15" name="black" ></button>	
+							<button id="BTNRED" class="group4image"  ><img class=icon src="./img/RED.png" width="15" height="15" name="red" ></button>
+							<button id="BTNBLUE" class="group4image" ><img class=icon src="./img/BLUE.png" width="15" height=15 name="blue" ></button>	
+							<button id="BTNGREEN" class="group4image" ><img class=icon src="./img/GREEN.png" width="15" height="15" name="green" ></button>
+						</div>
+						<div id="strokes" class="groupbuttons">
+							<button id="BTNDOTTED"  class="group2image" ><img class=icon src="./img/dotted.png" width="30" height="15" name="dotted" ></button>
+							
+							<button id="BTNSOLID" class="group2image"  ><img class=icon src="./img/solid.png" width="30" height="15" name="solid" ></button>
+						</div>
+						<div id="aligns" class="groupbuttons"> 
+							<button  id="BTNalignleft" class="group4image" ><img class=icon src="./img/alignleft.png" width="15" height="15" name="alignleft" ></button>	
+							<button id="BTNalignright" class="group4image"  ><img class=icon src="./img/alignright.png" width="15" height="15" name="alignright" ></button>
+							<button id="BTNaligntop" class="group4image" ><img class=icon src="./img/aligntop.png" width="15" height=15 name="aligntop" ></button>	
+							<button id="BTNalignbottom" class="group4image" ><img class=icon src="./img/alignbottom.png" width="15" height="15" name="alignbottom" ></button>
+						</div>
+						<div id="sizeadjust" class="groupbuttons">
+							<button id="BTNwidth"  class="group2image" ><img class=icon src="./img/width.png" width="30" height="15" name="width" ></button>
+							
+							<button id="BTNwidthnarrow"  class="group2image" ><img class=icon src="./img/widthnarrow.png" width="30" height="15" name="widthnarrow" ></button>							
+						</div>
+						<div id="sizeadjust2" class="groupbuttons">
+							<button id="BTNheight" class="group2image2"  ><img class=icon src="./img/height.png" width="15" height="30" name="height" ></button>				
+							<button id="BTNheightshort" class="group2image2"  ><img class=icon src="./img/heightshort.png" width="15" height="30" name="heightshort" ></button>
+						</div>					
+						<div id ='nodediameter_y' class="groupbuttons">
+							<div id="nodediameterbar_y" class="optionbar">
+								<button id="BTNdiametershort"  class="group4image" ><img class=icon src="./img/diametershort.png" width="15" height="15" name="diameterlong" ></button>
+								<textarea rows="1" cols="1" maxlength="2" id="textdiametershort" class="optiondiagramtext">40</textarea>
+							</div>
+							<div id='diametershortbuttons' class="optionbuttons">					
+								<button id="BTNplusdiametershort"  class="group4image" ><img class=icon src="./img/plus.png" width="15" height="15" name="diameterlongplus" ></button>
+								<button id="BTNminusdiametershort"  class="group4image" ><img class=icon src="./img/minus.png" width="15" height="15" name="diameterlongminus" ></button>							
+							</div>						
+						</div>
+						<div id ='fontsize' class="groupbuttons">
+							<div id="fontsizebar" class="optionbar">
+								<button id="BTNfontsize"  class="group4image" ><img class=icon src="./img/fontsize.png" width="15" height="15" name="fontsize " disabled="disabled"></button>
+								</br>
+								<textarea rows="1" cols="1" maxlength="2" id="textfontsize" class="optiondiagramtext">12</textarea></div>
+							<div id='fontsizebuttons' class="optionbuttons">
+								<button id="BTNplusfont"  class="group4image" ><img class=icon src="./img/plus.png" width="15" height="15" name="fontplus" ></button>
+								</br>
+								<button id="BTNminusfont"  class="group4image" ><img class=icon src="./img/minus.png" width="15" height="15" name="fontminus" ></button>							
+							</div>							
+						</div>						
+						<div id ='strokewidth' class="groupbuttons">
+							<div id="strokewidthbar" class="optionbar">
+								<button id="BTNstrokewidth"  class="group4image" ><img class=icon src="./img/strokewidth.png" width="15" height="15" name="strokewidth" ></button>
+								</br>
+								<textarea rows="1" cols="1" maxlength="3" id="textstrokewidth" class="optiondiagramtext">1</textarea></div>
+							<div id='strokewidthbuttons' class="optionbuttons">
+								<button id="BTNplusstroke"  class="group4image" ><img class=icon src="./img/plus.png" width="15" height="15" name="strokeplus" ></button>
+								</br>
+								<button id="BTNminusstroke"  class="group4image" ><img class=icon src="./img/minus.png" width="15" height="15" name="strokeminus" ></button>							
+							</div>							
+						</div>
+						<div id ='ecurvesize' class="groupbuttons">
+							<div id="ecurvesizebar" class="optionbar">
+								<button id="BTNecurvesize"  class="group4image" ><img class=icon src="./img/ecurvesize.png" width="15" height="15" name="ecurvesize" ></button>
+								</br>
+								<textarea rows="1" cols="1" maxlength="2" id="textecurvesize" class="optiondiagramtext">32</textarea></div>
+							<div id='ecurvesizebuttons' class="optionbuttons">
+								<button id="BTNplusecurve"  class="group4image" ><img class=icon src="./img/plus.png" width="15" height="15" name="ecurveplus" ></button>
+								</br>
+								<button id="BTNminusecurve"  class="group4image" ><img class=icon src="./img/minus.png" width="15" height="15" name="ecurveminus" ></button>							
+							</div>						
+						</div>
+						<div id ='nodediameter' class="groupbuttons">
+							<div id="nodediameterbar" class="optionbar">
+								<button id="BTNdiameterlong"  class="group4image" ><img class=icon src="./img/diameterlong.png" width="15" height="15" name="diameterlong" ></button>
+								</br>
+								<textarea rows="1" cols="1" maxlength="2" id="textdiameterlong"  class="optiondiagramtext">40</textarea></div>
+							<div id='diameterlongbuttons' class="optionbuttons">
+								<button id="BTNplusdiameterlong"  class="group4image" ><img class=icon src="./img/plus.png" width="15" height="15" name="diameterlongplus" ></button>
+								</br>
+								<button id="BTNminusdiameterlong"  class="group4image" ><img class=icon src="./img/minus.png" width="15" height="15" name="diameterlongminus" ></button>							
+							</div>						
+						</div>						
+						</br>
+						<div id ='ecurvepos' class="group8buttons">
+							<button id="BTNecurvetopleft"  class="group4image" ><img class=icon src="./img/ecurvetopleft.png" width="15" height="15" name="ecurvetopleft" ></button>
+							<button id="BTNecurvetop"  class="group4image" ><img class=icon src="./img/ecurvetop.png" width="15" height="15" name="ecurvetop" ></button>
+							<button id="BTNecurvetopright"  class="group4image" ><img class=icon src="./img/ecurvetopright.png" width="15" height="15" name="ecurvetopright" ></button>
+							<button id="BTNecurveleft"  class="group4image" ><img class=icon src="./img/ecurveleft.png" width="15" height="15" name="ecurveleft.png" ></button>
+							<button id="BTNecurvecenter"  class="group4image" ><img class=icon src="./img/ecurveposcenter.png" width="15" height="15" name="ecurveposcenter" ></button>
+							<button id="BTNecurveright"  class="group4image" ><img class=icon src="./img/ecurveright.png" width="15" height="15" name="ecurvetopleft" ></button>
+							<button id="BTNecurvebottomleft"  class="group4image" ><img class=icon src="./img/ecurvebottomleft.png" width="15" height="15" name="ecurvetop" ></button>
+							<button id="BTNecurvebottom"  class="group4image" ><img class=icon src="./img/ecurvebottom.png" width="15" height="15" name="ecurvetopright" ></button>																									
+							<button id="BTNecurvebottomright"  class="group4image" ><img class=icon src="./img/ecurvebottomright.png" width="15" height="15" name="ecurvetopright" ></button>
+						</div>
+						<div id ='ecurvepos' class="group8buttons">
+							<button id="BTNmoveupleft"  class="group4image" ><img class=icon src="./img/space.png" width="15" height="15" name="moveupleft" ></button>
+							<button id="BTNmoveup"  class="group4image" ><img class=icon src="./img/up.png" width="15" height="15" name="moveup" ></button>
+							<button id="BTNmoveupright"  class="group4image" ><img class=icon src="./img/space.png" width="15" height="15" name="moveupright" ></button>
+							<button id="BTNmoveleft"  class="group4image" ><img class=icon src="./img/left.png" width="15" height="15" name="moveleft.png" ></button>
+							<button id="BTNmovecenter"  class="group4image" ><img class=icon src="./img/center.png" width="15" height="15" name="movecenter" ></button>
+							<button id="BTNmoveright"  class="group4image" ><img class=icon src="./img/right.png" width="15" height="15" name="moveright" ></button>
+							<button id="BTNmovedownleft"  class="group4image" ><img class=icon src="./img/space.png" width="15" height="15" name="movedownleft" ></button>
+							<button id="BTNmovedown"  class="group4image" ><img class=icon src="./img/down.png" width="15" height="15" name="movedown" ></button>																									
+							<button id="BTNmovedownright"  class="group4image" ><img class=icon src="./img/space.png" width="15" height="15" name="movedownright" ></button>
+						</div>
+					</div>
+					<!--
+					<div id="diagramoptions">
+						<form action="" method="post" name="form001" class='diagram'>
+							<p class='diagrammenu-linetitle'>FontSize: 
+							<select id="selectfontsize" onchange="getSelectValue_FontSize()" class ='diagrammenu'>
+							<script>		
+								var selectfontsize = document.getElementById('selectfontsize');
+								for (i=8; i<=36;i++){
+								var option = document.createElement('option');
+								option.value = i;											
+								option.innerHTML= i+'pt';
+								selectfontsize.appendChild(option);
+								}																
+							</script>								
+							</select>
+							</p>
+							<p class='diagrammenu-linetitle'>eCurveSize: 
+							<select id="selectErrorCurveSize" onchange="getSelectValue_ErrorCurveSize()" class ='diagrammenu'>
+							<script>		
+								var selectErrorCurveSize = document.getElementById('selectErrorCurveSize');
+								for (i=1; i<=10;i++){
+								var option = document.createElement('option');
+								option.value = Math.round(default_selfcurve_LR * (1+i/5));											
+								option.innerHTML= option.value+'px';
+								selectErrorCurveSize.appendChild(option);
+								}																
+							</script>
+							</select>
+							</p>
+							<p class='diagrammenu-linetitle'>LineWidth:
+							<select id="selectLineWidth" onchange="getSelectValue_LineWidth()" class ='diagrammenu'>
+							<script>		
+								var selectLineWidth = document.getElementById('selectLineWidth');
+								for (i=0; i<=10;i++){
+								var option = document.createElement('option');
+								option.value = default_strokeWIDTH * (1+i/5);											
+								option.innerHTML= option.value+'px';
+								selectLineWidth.appendChild(option);
+								}															
+								</script>
+							</select>
+							</p>
+							<p class='diagrammenu-linetitle'> ChartSize: 
+							<select id="selectChartSize" onchange="getSelectValue_ChartSize()" class ='diagrammenu'>
+								<option value="small">Small</option>
+								<option value="medium">Medium</option>
+								<option value="large">Large</option>
+							</select>
+							</p>
+						</form>					
+					</div>-->			
+				</div>
+			</div> <!-- id="pdsvgdiagrammenus" -->
+
+			<hr>			
+			<div id="pdsvgmatrix">
+				<div id="submatrix">									
+				</div>
+			</div><!-- end of div id="pdsvgmatrix"-->		
+		</div> <!-- end of div id="menus"-->
+		<div id="svgcontainer">
+			<script src="./js/initiate.js" charset="utf-8"></script>
+			<script src="./js/btnfs.js" charset="utf-8"></script>
+		</div> <!-- end of div id="svgcontainer" -->
+	</div> <!-- <div id="pdsvgpage"-->
+	<div id="footer">
+		<div class="bar" id='footbar' style=" height:50; float:left; color:'#222'; font-size:9; font-family:Arial, Helvetica, sans-serif; font-style: normal; align = right" >
+		<div style="float:left; margin: 2 15 5 5">
+		<p><span style="font-weight:bold">Authors</span>: Yujiao Mai, Ziqian Xu, Zhiyong Zhang, Ke-Hai Yuan</p>
+		<p><span style="font-weight:bold">Copyright</span>@2015-2022, psychstat.org</p>
+		</div>
+		<div style="float:left; margin: 2 15 5 5">
+		<p><span style="font-weight:bold">Licensed</span> under the MIT license <span style="font-weight:bold">(MIT)</span> 
+			&nbsp;&nbsp; &nbsp; &nbsp; <span style="font-weight:bold">Current Version</span> 1.0 &nbsp;&nbsp; &nbsp;&nbsp; 
+			<span style="font-weight:bold">Support Email</span>: zzhang4@nd.edu & zxu9@nd.edu</p>
+		<p><span style="font-weight:bold">To Cite the Program</span>: 
+			Mai, Y., Xu, Z., Zhang, Z., & Yuan, K. (2022). An Open Source WYSIWYG Web Application for Drawing Path Diagrams of Structural Equation Models. https://semdiag.psychstat.org/. </p>
+	
+	</div>
+	</div>
+
+</div>
+</body>
