@@ -1244,11 +1244,11 @@ function textecurvesize() {
 }
 
 function textdiameterlong() {
-    oTextarea = document.getElementById("textdiameterlong"), Number(oTextarea.value) <= 400 && Number(oTextarea.value) >= 20 ? (current_RADIUSH = Number(oTextarea.value), BTNdiameterlong()) : oTextarea.value = 2 * default_RADIUSH
+    oTextarea = document.getElementById("textdiameterlong"), Number(oTextarea.value) <= 400 && Number(oTextarea.value) >= 2 ? (current_RADIUSH = Number(oTextarea.value), BTNdiameterlong()) : oTextarea.value = 2 * default_RADIUSH
 }
 
 function textdiametershort() {
-    oTextarea = document.getElementById("textdiametershort"), Number(oTextarea.value) <= 400 && Number(oTextarea.value) >= 20 ? (current_RADIUSV = Number(oTextarea.value), BTNdiametershort()) : oTextarea.value = 2 * default_RADIUSV
+    oTextarea = document.getElementById("textdiametershort"), Number(oTextarea.value) <= 400 && Number(oTextarea.value) >= 2 ? (current_RADIUSV = Number(oTextarea.value), BTNdiametershort()) : oTextarea.value = 2 * default_RADIUSV
 }
 
 function getSelectValue_FontSize() {
