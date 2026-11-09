@@ -720,6 +720,7 @@ function texteditdiaglog(_objecttype,d,i){
 	//****by yujiao: begin the buttons creating:
     var button1 = document.createElement('button');
     button1.innerHTML = 'OK';
+	button1.type = 'button';
 	//button1.class='';
 	button1.id="dialogbuton1";
 	$(button1).click(function () { //alert("button1.click()");
@@ -744,6 +745,7 @@ function texteditdiaglog(_objecttype,d,i){
 	
 	var button2 = document.createElement('button');
     button2.innerHTML = 'Cancel';
+	button2.type = 'button';
 	button2.id="dialogbuton2";
 	button2.styles="margin-left:2px";
     $(button2).click(function () {

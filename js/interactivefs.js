@@ -1664,6 +1664,10 @@ function updatesvg(){
 					OnmysvgMouseMove(this,d);
 				})
 	}
+	// Typeset TeX labels ($...$ or \(...\)) right after every redraw, so edited labels stay rendered.
+	if (typeof svgmathqueue !== 'undefined' && mysvg.selectAll("text").filter(function(){ return /^\s*[LlRrCc]?(\\\(.*\\\)|\$.*\$)\s*$/.test(this.textContent); }).size() > 0){
+		typesetsvgmath();
+	}
 } // end of function updatesvg(){}
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

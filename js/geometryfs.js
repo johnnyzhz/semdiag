@@ -7,4 +7,234 @@
  * Support email for questions zzhang4@nd.edu      *
  *                             ymai@nd.edu         * 
  ***************************************************/
-function interP_2lines(a,b,c,d,e,f){var g=a*e-d*b;if(0===g)return{numsolution:0,interP:{}};var h=(b*f-c*e)/(a*e-d*b),i=(d*c-a*f)/(a*e-d*b);return{numsolution:1,interP:{x:h,y:i}}}function calculate_theta(a,b){var c=0,d=b.x-a.x,e=b.y-a.y,f=Math.abs(d),g=Math.abs(e),h=Math.atan(g/f);return c=d>=0&e>=0?h:d<0&e>=0?Math.PI-h:d<0&e<0?Math.PI+h:2*Math.PI-h}function generatePointsForTriangle(a,b,c,d){var e={x:a-c*Math.sqrt(3)/2,y:b+c/2},f={x:a+c*Math.sqrt(3)/2,y:b+c/2},g={x:a,y:b-d};return temp=e.x+","+e.y+" "+f.x+","+f.y+" "+g.x+","+g.y+" "+e.x+","+e.y,{p1:e,p2:f,p3:g}}function generatePointsForDiamond(a,b,c,d){var e={x:a-c,y:b},f={x:a,y:b-d},g={x:a+c,y:b},h={x:a,y:b+d};return temp=e.x+","+e.y+" "+f.x+","+f.y+" "+g.x+","+g.y+" "+h.x+","+h.y+" "+e.x+","+e.y,{p1:e,p2:f,p3:g,p4:h}}function generatePointsForHexagon(a,b,c,d){var e={x:a-c,y:b},f={x:a-c/2,y:b-d*Math.sqrt(3)/2},g={x:a+c/2,y:b-d*Math.sqrt(3)/2},h={x:a+c,y:b},i={x:a+c/2,y:b+d*Math.sqrt(3)/2},j={x:a-c/2,y:b+d*Math.sqrt(3)/2};return temp=e.x+","+e.y+" "+f.x+","+f.y+" "+g.x+","+g.y+" "+h.x+","+h.y+" "+i.x+","+i.y+" "+j.x+","+j.y+" "+e.x+","+e.y,{p1:e,p2:f,p3:g,p4:h,p5:i,p6:j}}function calculate_angles_of_triangle(a,b,c){var d=.25*Math.PI,e=.25*Math.PI,f=.5*Math.PI,g=!0,h=!1,i={P1:a,P2:c},l={},m={},n={};if(i.P2.x===i.P1.x)l={A:1,B:0,C:-i.P1.x},m={A:0,B:1,C:-b.y};else{var o=(i.P2.y-i.P1.y)/(i.P2.x-i.P1.x);l={A:o,B:-1,C:i.P1.y-o*i.P1.x};var p=Math.atan(o)-1*Math.PI/2,q=Math.tan(p);m={A:q,B:-1,C:b.y-q*b.x}}var r=interP_2lines(l.A,l.B,l.C,m.A,m.B,m.C);if(1===r.numsolution){h=!0,n=r.interP;var s=Math.sqrt((n.x-b.x)*(n.x-b.x)+(n.y-b.y)*(n.y-b.y)),t=Math.sqrt((n.x-a.x)*(n.x-a.x)+(n.y-a.y)*(n.y-a.y)),u=Math.sqrt((n.x-c.x)*(n.x-c.x)+(n.y-c.y)*(n.y-c.y));a.x===c.x?(n.y===a.y?(d=Math.atan(s/t),e=Math.PI/2):n.y===c.y?(d=Math.PI/2,e=Math.atan(s/u)):n.y>a.y&n.y<c.y||n.y>c.y&n.y<a.y?(d=Math.atan(s/t),e=Math.atan(s/u)):c.y>=a.y?n.y<a.y?(d=Math.PI-Math.atan(s/t),e=Math.atan(s/u)):(d=Math.atan(s/t),e=Math.PI-Math.atan(s/u)):n.y>a.y?(d=Math.PI-Math.atan(s/t),e=Math.atan(s/u)):(d=Math.atan(s/t),e=Math.PI-Math.atan(s/u)),g=c.y<=a.y?b.x>=n.x:b.x<=n.x):(n.x===a.x?(d=Math.atan(s/t),e=Math.PI/2):n.x===c.x?(d=Math.PI/2,e=Math.atan(s/u)):n.x>a.x&n.x<c.x||n.x>c.x&n.x<a.x?(d=Math.atan(s/t),e=Math.atan(s/u)):c.x>=a.x?n.x<a.x?(d=Math.PI-Math.atan(s/t),e=Math.atan(s/u)):(d=Math.atan(s/t),e=Math.PI-Math.atan(s/u)):n.x>a.x?(d=Math.PI-Math.atan(s/t),e=Math.atan(s/u)):(d=Math.atan(s/t),e=Math.PI-Math.atan(s/u)),g=c.x>=a.x?b.y>=n.y:b.y<=n.y),f=Math.PI-d-e}return{Is_success:h,angle_P0:d,angle_P2:e,angle_P1:f,angle_anticlockwise:g}}
+function interP_2lines(coefA1, coefB1, constC1, coefA2, coefB2, constC2) {
+    var determinant = coefA1 * coefB2 - coefA2 * coefB1;
+    if (0 === determinant) return {
+        numsolution: 0,
+        interP: {}
+    };
+    var intersectX = (coefB1 * constC2 - constC1 * coefB2) / determinant;
+    var intersectY = (coefA2 * constC1 - coefA1 * constC2) / determinant;
+    return {
+        numsolution: 1,
+        interP: {
+            x: intersectX,
+            y: intersectY
+        }
+    };
+}
+
+function calculate_theta(startPoint, endPoint) {
+    var deltaX = endPoint.x - startPoint.x;
+    var deltaY = endPoint.y - startPoint.y;
+    var referenceAngle = Math.atan(Math.abs(deltaY) / Math.abs(deltaX));
+    if (deltaX >= 0 && deltaY >= 0) return referenceAngle;
+    if (deltaX < 0 && deltaY >= 0) return Math.PI - referenceAngle;
+    if (deltaX < 0 && deltaY < 0) return Math.PI + referenceAngle;
+    return 2 * Math.PI - referenceAngle;
+}
+
+// Sets the global `temp` to the SVG points string of the shape, then returns the vertices.
+function generatePointsForTriangle(centerX, centerY, halfSide, apexHeight) {
+    var leftVertex = {
+        x: centerX - halfSide * Math.sqrt(3) / 2,
+        y: centerY + halfSide / 2
+    };
+    var rightVertex = {
+        x: centerX + halfSide * Math.sqrt(3) / 2,
+        y: centerY + halfSide / 2
+    };
+    var apexVertex = {
+        x: centerX,
+        y: centerY - apexHeight
+    };
+    temp = leftVertex.x + "," + leftVertex.y + " " + rightVertex.x + "," + rightVertex.y + " " + apexVertex.x + "," + apexVertex.y + " " + leftVertex.x + "," + leftVertex.y;
+    return {
+        p1: leftVertex,
+        p2: rightVertex,
+        p3: apexVertex
+    };
+}
+
+// Sets the global `temp` to the SVG points string of the shape, then returns the vertices.
+function generatePointsForDiamond(centerX, centerY, halfWidth, halfHeight) {
+    var leftVertex = {
+        x: centerX - halfWidth,
+        y: centerY
+    };
+    var topVertex = {
+        x: centerX,
+        y: centerY - halfHeight
+    };
+    var rightVertex = {
+        x: centerX + halfWidth,
+        y: centerY
+    };
+    var bottomVertex = {
+        x: centerX,
+        y: centerY + halfHeight
+    };
+    temp = leftVertex.x + "," + leftVertex.y + " " + topVertex.x + "," + topVertex.y + " " + rightVertex.x + "," + rightVertex.y + " " + bottomVertex.x + "," + bottomVertex.y + " " + leftVertex.x + "," + leftVertex.y;
+    return {
+        p1: leftVertex,
+        p2: topVertex,
+        p3: rightVertex,
+        p4: bottomVertex
+    };
+}
+
+// Sets the global `temp` to the SVG points string of the shape, then returns the vertices.
+function generatePointsForHexagon(centerX, centerY, halfWidth, halfHeight) {
+    var verticalOffset = halfHeight * Math.sqrt(3) / 2;
+    var leftVertex = {
+        x: centerX - halfWidth,
+        y: centerY
+    };
+    var upperLeftVertex = {
+        x: centerX - halfWidth / 2,
+        y: centerY - verticalOffset
+    };
+    var upperRightVertex = {
+        x: centerX + halfWidth / 2,
+        y: centerY - verticalOffset
+    };
+    var rightVertex = {
+        x: centerX + halfWidth,
+        y: centerY
+    };
+    var lowerRightVertex = {
+        x: centerX + halfWidth / 2,
+        y: centerY + verticalOffset
+    };
+    var lowerLeftVertex = {
+        x: centerX - halfWidth / 2,
+        y: centerY + verticalOffset
+    };
+    temp = leftVertex.x + "," + leftVertex.y + " " + upperLeftVertex.x + "," + upperLeftVertex.y + " " + upperRightVertex.x + "," + upperRightVertex.y + " " + rightVertex.x + "," + rightVertex.y + " " + lowerRightVertex.x + "," + lowerRightVertex.y + " " + lowerLeftVertex.x + "," + lowerLeftVertex.y + " " + leftVertex.x + "," + leftVertex.y;
+    return {
+        p1: leftVertex,
+        p2: upperLeftVertex,
+        p3: upperRightVertex,
+        p4: rightVertex,
+        p5: lowerRightVertex,
+        p6: lowerLeftVertex
+    };
+}
+
+// Angles at the two end points of the segment and at the apex, plus the apex side.
+// Angle_P1 keeps its default (pi/2) when the foot of the altitude cannot be found.
+function calculate_angles_of_triangle(firstPoint, apexPoint, secondPoint) {
+    var angleAtFirstPoint = .25 * Math.PI;
+    var angleAtSecondPoint = .25 * Math.PI;
+    var angleAtApex = .5 * Math.PI;
+    var isSuccess = false;
+    var isAnticlockwise = true;
+    var segment = {
+        P1: firstPoint,
+        P2: secondPoint
+    };
+    var baseLine = {};
+    var altitudeLine = {};
+    var footPoint = {};
+    if (segment.P2.x === segment.P1.x) {
+        baseLine = {
+            A: 1,
+            B: 0,
+            C: -segment.P1.x
+        };
+        altitudeLine = {
+            A: 0,
+            B: 1,
+            C: -apexPoint.y
+        };
+    } else {
+        var baseSlope = (segment.P2.y - segment.P1.y) / (segment.P2.x - segment.P1.x);
+        baseLine = {
+            A: baseSlope,
+            B: -1,
+            C: segment.P1.y - baseSlope * segment.P1.x
+        };
+        var altitudeAngle = Math.atan(baseSlope) - 1 * Math.PI / 2;
+        var altitudeSlope = Math.tan(altitudeAngle);
+        altitudeLine = {
+            A: altitudeSlope,
+            B: -1,
+            C: apexPoint.y - altitudeSlope * apexPoint.x
+        };
+    }
+    var intersection = interP_2lines(baseLine.A, baseLine.B, baseLine.C, altitudeLine.A, altitudeLine.B, altitudeLine.C);
+    if (1 === intersection.numsolution) {
+        isSuccess = true;
+        footPoint = intersection.interP;
+        var distApexToFoot = Math.sqrt((footPoint.x - apexPoint.x) * (footPoint.x - apexPoint.x) + (footPoint.y - apexPoint.y) * (footPoint.y - apexPoint.y));
+        var distFirstToFoot = Math.sqrt((footPoint.x - firstPoint.x) * (footPoint.x - firstPoint.x) + (footPoint.y - firstPoint.y) * (footPoint.y - firstPoint.y));
+        var distSecondToFoot = Math.sqrt((footPoint.x - secondPoint.x) * (footPoint.x - secondPoint.x) + (footPoint.y - secondPoint.y) * (footPoint.y - secondPoint.y));
+        if (firstPoint.x === secondPoint.x) {
+            // Vertical segment: compare along y.
+            if (footPoint.y === firstPoint.y) {
+                angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                angleAtSecondPoint = Math.PI / 2;
+            } else if (footPoint.y === secondPoint.y) {
+                angleAtFirstPoint = Math.PI / 2;
+                angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+            } else if (footPoint.y > firstPoint.y && footPoint.y < secondPoint.y || footPoint.y > secondPoint.y && footPoint.y < firstPoint.y) {
+                angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+            } else if (secondPoint.y >= firstPoint.y) {
+                if (footPoint.y < firstPoint.y) {
+                    angleAtFirstPoint = Math.PI - Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+                } else {
+                    angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.PI - Math.atan(distApexToFoot / distSecondToFoot);
+                }
+            } else {
+                if (footPoint.y > firstPoint.y) {
+                    angleAtFirstPoint = Math.PI - Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+                } else {
+                    angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.PI - Math.atan(distApexToFoot / distSecondToFoot);
+                }
+            }
+            isAnticlockwise = secondPoint.y <= firstPoint.y ? apexPoint.x >= footPoint.x : apexPoint.x <= footPoint.x;
+        } else {
+            // Non-vertical segment: compare along x.
+            if (footPoint.x === firstPoint.x) {
+                angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                angleAtSecondPoint = Math.PI / 2;
+            } else if (footPoint.x === secondPoint.x) {
+                angleAtFirstPoint = Math.PI / 2;
+                angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+            } else if (footPoint.x > firstPoint.x && footPoint.x < secondPoint.x || footPoint.x > secondPoint.x && footPoint.x < firstPoint.x) {
+                angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+            } else if (secondPoint.x >= firstPoint.x) {
+                if (footPoint.x < firstPoint.x) {
+                    angleAtFirstPoint = Math.PI - Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+                } else {
+                    angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.PI - Math.atan(distApexToFoot / distSecondToFoot);
+                }
+            } else {
+                if (footPoint.x > firstPoint.x) {
+                    angleAtFirstPoint = Math.PI - Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.atan(distApexToFoot / distSecondToFoot);
+                } else {
+                    angleAtFirstPoint = Math.atan(distApexToFoot / distFirstToFoot);
+                    angleAtSecondPoint = Math.PI - Math.atan(distApexToFoot / distSecondToFoot);
+                }
+            }
+            isAnticlockwise = secondPoint.x >= firstPoint.x ? apexPoint.y >= footPoint.y : apexPoint.y <= footPoint.y;
+        }
+        angleAtApex = Math.PI - angleAtFirstPoint - angleAtSecondPoint;
+    }
+    return {
+        Is_success: isSuccess,
+        angle_P0: angleAtFirstPoint,
+        angle_P2: angleAtSecondPoint,
+        angle_P1: angleAtApex,
+        angle_anticlockwise: isAnticlockwise
+    };
+}

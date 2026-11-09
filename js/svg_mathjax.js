@@ -32,4 +32,235 @@
  * Second, use MathJax.Callback.Queue() to solve the asychronous problem with recruisive functions with MathJax rendering steps. 
  */
 
- Svg_MathJax_queue=function(a){function b(a,b){for(var c=a.length,d=0;d<c;++d)b(a[d])}function c(a,c){var d=/^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;c=c||document,b(c.getElementsByTagName("svg"),function(c){b(c.getElementsByTagName("text"),function(b){var e=b.textContent.match(d);e&&a(c,b,e)})})}function d(d){function f(a){var b=document.createElement("div");b.setAttribute("id","mathjax_svg_bucket"),a.parentElement.appendChild(b),c(function(a,c,d){var f=document.createElement("div");b.appendChild(f);var g=d[2].replace(/^\$(.*)\$$/,"\\($1\\)");f.appendChild(document.createTextNode(g)),c.textContent="";var h=c.parentNode;e.push([c,f,d[1],h])},d.context)}function g(a){b(a,function(a){var b=a[0],c=a[1],e=a[2],f=a[3],g=c.getElementsByClassName("MathJax_SVG"),h=g[0],i=h.getElementsByTagName("svg")[0],j=i,k={width:j.viewBox.baseVal.width,height:j.viewBox.baseVal.height},l=j.getElementsByTagName("g")[0].cloneNode(!0),m=b.getAttribute("font-size");m=m.split("pt")[0];var r,n=d.scale*m,a=+b.getAttribute("x"),o=+b.getAttribute("y"),p=a,q=o;switch(e.toUpperCase()){case"L":r=0;break;case"R":r=-k.width;break;case"C":default:r=.5*-k.width}var s=0*k.height;l.setAttribute("transform","translate("+p+" "+q+") scale("+n+") translate("+r+" "+s+") matrix(1 0 0 -1 0 0)"),d.escape_clip&&b.parentNode.removeAttribute("clip-path"),f.replaceChild(l,b)});var c=document.getElementById("mathjax_svg_bucket");c.parentNode.removeChild(c)}var e=[];a=d.context||document;var h=h||MathJax.Callback.Queue();h.Push([f,a]),h.Push(["Typeset",MathJax.Hub]),h.Push([g,e])}var e=function(a){this.scale=.0016,this.escape_clip=!1,this.context=a||document};return e.prototype.install=function(){d(this)},e}(),Svg_MathJax=function(a){function b(a,b){var c=a.length;console.log("length of svg TagName"+c);for(var d=0;d<c;++d)b(a[d])}function c(a,c){var d=/^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;c=c||document,b(c.getElementsByTagName("svg"),function(c){b(c.getElementsByTagName("text"),function(b){var e=b.textContent.match(d);e&&a(c,b,e)})})}function d(a){var d=[];MathJax.Hub.Register.StartupHook("Begin Typeset",function(){var b=document.createElement("div");b.setAttribute("id","mathjax_svg_bucket"),document.body.appendChild(b),c(function(a,c,e){var f=document.createElement("div");b.appendChild(f);var g=e[2].replace(/^\$(.*)\$$/,"\\($1\\)");f.appendChild(document.createTextNode(g)),c.textContent="",d.push([c,f,e[1]])},a.context)}),console.log("items:"),console.log(d),MathJax.Hub.Register.StartupHook("End Typeset",function(){b(d,function(b){var c=b[0],d=b[1],e=b[2],f=d.getElementsByClassName("MathJax_SVG")[0].getElementsByTagName("svg")[0],g={width:f.viewBox.baseVal.width,height:f.viewBox.baseVal.height},h=f.getElementsByTagName("g")[0].cloneNode(!0),i=c.getAttribute("font-size");i=i.split("pt")[0];var n,j=a.scale*i,b=+c.getAttribute("x"),k=+c.getAttribute("y"),l=b,m=k;switch(e.toUpperCase()){case"L":n=0;break;case"R":n=-g.width;break;case"C":default:n=.5*-g.width}var o=0*g.height;h.setAttribute("transform","translate("+l+" "+m+") scale("+j+") translate("+n+" "+o+") matrix(1 0 0 -1 0 0)"),a.escape_clip&&c.parentNode.removeAttribute("clip-path"),c.parentNode.replaceChild(h,c)});var c=document.getElementById("mathjax_svg_bucket");c.parentNode.removeChild(c)})}var e=function(a){this.scale=.0016,this.escape_clip=!1,this.context=a||document};return e.prototype.install=function(){d(this)},e}();
+ Svg_MathJax_queue = (function () {
+    // Calls callback(item) for each element of an array-like list.
+    function forEachItem(items, callback) {
+        for (var count = items.length, i = 0; i < count; ++i) {
+            callback(items[i]);
+        }
+    }
+
+    // Calls onMatch(svgElement, textElement, match) for each <text> under root whose
+    // content is LaTeX in $...$ or \(...\), with an optional L/R/C alignment letter.
+    function findLatexTextNodes(onMatch, root) {
+        var latexPattern = /^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;
+        root = root || document;
+        forEachItem(root.getElementsByTagName("svg"), function (svgElement) {
+            forEachItem(svgElement.getElementsByTagName("text"), function (textElement) {
+                var match = textElement.textContent.match(latexPattern);
+                if (match) {
+                    onMatch(svgElement, textElement, match);
+                }
+            });
+        });
+    }
+
+    function installQueue(svgMath) {
+        // Each entry: [textElement, mathContainer, alignment, parentElement, latexSource]
+        var pendingLabels = [];
+
+        // Step 1: copy each LaTeX label into a hidden bucket so MathJax can typeset it.
+        function copyLabelsToBucket(context) {
+            var bucket = document.createElement("div");
+            bucket.setAttribute("id", "mathjax_svg_bucket");
+            context.parentElement.appendChild(bucket);
+            bucket.style.display = "none";
+            svgMath.bucket = bucket;
+
+            findLatexTextNodes(function (svgElement, textElement, match) {
+                var mathContainer = document.createElement("div");
+                bucket.appendChild(mathContainer);
+                // MathJax reads \(...\) delimiters, so $...$ is converted.
+                var mathSource = match[2].replace(/^\$(.*)\$$/, "\\($1\\)");
+                mathContainer.appendChild(document.createTextNode(mathSource));
+                textElement.textContent = "";
+                var parentElement = textElement.parentNode;
+                pendingLabels.push([textElement, mathContainer, match[1], parentElement, match[2]]);
+            }, context);
+        }
+
+        // Step 2: swap each <text> for its typeset SVG and cache the result for reuse.
+        function replaceLabelsWithRendered(labels) {
+            forEachItem(labels, function (label) {
+                var textElement = label[0];
+                var mathContainer = label[1];
+                var alignment = label[2];
+                var parentElement = label[3];
+                var latexSource = label[4];
+
+                var mathSvg = mathContainer.getElementsByClassName("MathJax_SVG")[0].getElementsByTagName("svg")[0];
+                var svgSize = {
+                    width: mathSvg.viewBox.baseVal.width,
+                    height: mathSvg.viewBox.baseVal.height
+                };
+                var renderedGroup = mathSvg.getElementsByTagName("g")[0].cloneNode(true);
+                var fontSize = textElement.getAttribute("font-size").split("pt")[0];
+                var scale = svgMath.scale * fontSize;
+                var x = +textElement.getAttribute("x");
+                var y = +textElement.getAttribute("y");
+
+                var alignX;
+                switch (alignment.toUpperCase()) {
+                    case "L":
+                        alignX = 0;
+                        break;
+                    case "R":
+                        alignX = -svgSize.width;
+                        break;
+                    case "C":
+                    default:
+                        alignX = 0.5 * -svgSize.width;
+                }
+                var alignY = 0 * svgSize.height;
+
+                window.svgmathcache = window.svgmathcache || {};
+                window.svgmathcache[latexSource + "|" + fontSize + "|" + alignment] = {
+                    inner: renderedGroup.cloneNode(true),
+                    scale: scale,
+                    alignX: alignX,
+                    alignY: alignY
+                };
+
+                renderedGroup.setAttribute(
+                    "transform",
+                    "translate(" + x + " " + y + ") scale(" + scale + ") translate(" + alignX + " " + alignY + ") matrix(1 0 0 -1 0 0)"
+                );
+                if (svgMath.escape_clip) {
+                    textElement.parentNode.removeAttribute("clip-path");
+                }
+                if (textElement.parentNode === parentElement) {
+                    parentElement.replaceChild(renderedGroup, textElement);
+                }
+            });
+
+            var staleBucket = document.getElementById("mathjax_svg_bucket");
+            if (staleBucket) {
+                staleBucket.parentNode.removeChild(staleBucket);
+            }
+            if (svgMath.onDone) {
+                svgMath.onDone();
+            }
+        }
+
+        var context = svgMath.context || document;
+        var callbackQueue = MathJax.Callback.Queue();
+        callbackQueue.Push([copyLabelsToBucket, context]);
+        callbackQueue.Push([function () { return MathJax.Hub.Typeset(svgMath.bucket); }]);
+        callbackQueue.Push([replaceLabelsWithRendered, pendingLabels]);
+    }
+
+    function SvgMathQueue(context) {
+        this.scale = 0.0016;
+        this.escape_clip = false;
+        this.context = context || document;
+    }
+
+    SvgMathQueue.prototype.install = function () {
+        installQueue(this);
+    };
+
+    return SvgMathQueue;
+})(),
+Svg_MathJax=(function () {
+    // Logs the item count, then calls callback(item) for each element.
+    function forEachItemLogged(items, callback) {
+        var count = items.length;
+        console.log("length of svg TagName" + count);
+        for (var i = 0; i < count; ++i) {
+            callback(items[i]);
+        }
+    }
+
+    function findLatexTextNodes(onMatch, root) {
+        var latexPattern = /^\s*([LlRrCc]?)(\\\(.*\\\)|\$.*\$)\s*$/;
+        root = root || document;
+        forEachItemLogged(root.getElementsByTagName("svg"), function (svgElement) {
+            forEachItemLogged(svgElement.getElementsByTagName("text"), function (textElement) {
+                var match = textElement.textContent.match(latexPattern);
+                if (match) {
+                    onMatch(svgElement, textElement, match);
+                }
+            });
+        });
+    }
+
+    function installLegacyTypesetter(svgMath) {
+        // Each entry: [textElement, mathContainer, alignment]
+        var pendingLabels = [];
+
+        MathJax.Hub.Register.StartupHook("Begin Typeset", function () {
+            var bucket = document.createElement("div");
+            bucket.setAttribute("id", "mathjax_svg_bucket");
+            document.body.appendChild(bucket);
+            findLatexTextNodes(function (svgElement, textElement, match) {
+                var mathContainer = document.createElement("div");
+                bucket.appendChild(mathContainer);
+                // MathJax reads \(...\) delimiters, so $...$ is converted.
+                var mathSource = match[2].replace(/^\$(.*)\$$/, "\\($1\\)");
+                mathContainer.appendChild(document.createTextNode(mathSource));
+                textElement.textContent = "";
+                pendingLabels.push([textElement, mathContainer, match[1]]);
+            }, svgMath.context);
+        });
+
+        console.log("items:");
+        console.log(pendingLabels);
+
+        MathJax.Hub.Register.StartupHook("End Typeset", function () {
+            forEachItemLogged(pendingLabels, function (label) {
+                var textElement = label[0];
+                var mathContainer = label[1];
+                var alignment = label[2];
+
+                var mathSvg = mathContainer.getElementsByClassName("MathJax_SVG")[0].getElementsByTagName("svg")[0];
+                var svgSize = {
+                    width: mathSvg.viewBox.baseVal.width,
+                    height: mathSvg.viewBox.baseVal.height
+                };
+                var renderedGroup = mathSvg.getElementsByTagName("g")[0].cloneNode(true);
+                var fontSize = textElement.getAttribute("font-size").split("pt")[0];
+                var scale = svgMath.scale * fontSize;
+                var x = +textElement.getAttribute("x");
+                var y = +textElement.getAttribute("y");
+
+                var alignX;
+                switch (alignment.toUpperCase()) {
+                    case "L":
+                        alignX = 0;
+                        break;
+                    case "R":
+                        alignX = -svgSize.width;
+                        break;
+                    case "C":
+                    default:
+                        alignX = 0.5 * -svgSize.width;
+                }
+                var alignY = 0 * svgSize.height;
+
+                renderedGroup.setAttribute(
+                    "transform",
+                    "translate(" + x + " " + y + ") scale(" + scale + ") translate(" + alignX + " " + alignY + ") matrix(1 0 0 -1 0 0)"
+                );
+                if (svgMath.escape_clip) {
+                    textElement.parentNode.removeAttribute("clip-path");
+                }
+                textElement.parentNode.replaceChild(renderedGroup, textElement);
+            });
+
+            var bucket = document.getElementById("mathjax_svg_bucket");
+            bucket.parentNode.removeChild(bucket);
+        });
+    }
+
+    function SvgMathLegacy(context) {
+        this.scale = 0.0016;
+        this.escape_clip = false;
+        this.context = context || document;
+    }
+
+    SvgMathLegacy.prototype.install = function () {
+        installLegacyTypesetter(this);
+    };
+
+    return SvgMathLegacy;
+})();
